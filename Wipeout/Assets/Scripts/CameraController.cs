@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     public float zoomSpeed = 10;
     public float minZoom = 2;
     public float maxZoom = 10;
+    public float heightOffset = 1.5f;
 
     public GameObject cameraTarget;
     // Start is called before the first frame update
@@ -34,11 +35,17 @@ public class CameraController : MonoBehaviour
         distFromCamera = Mathf.Clamp(distFromCamera - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minZoom, maxZoom);
 
         RaycastHit hit;
-        if (Physics.Raycast(cameraTarget.transform.position, -transform.forward, out hit, distFromCamera))
+        if (Physics.Raycast(GetTargetPosition(), -transform.forward, out hit, distFromCamera))
             currentDistance = hit.distance;
         else
             currentDistance = Mathf.MoveTowards(currentDistance, distFromCamera, Time.deltaTime * relaxSpeed);
 
-        transform.position = cameraTarget.transform.position - currentDistance * transform.forward;
+        transform.position = GetTargetPosition() - currentDistance * transform.forward;
+    }
+
+
+    private Vector3 GetTargetPosition()
+    {
+        return cameraTarget.transform.position + heightOffset * Vector3.up;
     }
 }

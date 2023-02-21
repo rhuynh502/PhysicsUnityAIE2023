@@ -9,17 +9,20 @@ public class CharacterMovement : MonoBehaviour
     public float jumpHeight = 10;
     
     private CharacterController characterController;
+    private Animator animator;
     public Camera camera;
     private Vector2 moveInput = new Vector2();
     private bool jumpInput = false;
 
     public bool isGrounded = true;
     public Vector3 velocity = new Vector3();
+    public Vector3 hitDirection;
 
     // Start is called before the first frame update
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
         camera = Camera.main;
     }
 
@@ -29,6 +32,9 @@ public class CharacterMovement : MonoBehaviour
         moveInput.x = Input.GetAxis("Horizontal");
         moveInput.y = Input.GetAxis("Vertical");
         jumpInput = Input.GetButton("Jump");
+        animator.SetFloat("Forwards", moveInput.y);
+        animator.SetFloat("Side", moveInput.x);
+        animator.SetBool("Jump", !isGrounded);
     }
 
     void FixedUpdate()
@@ -37,8 +43,10 @@ public class CharacterMovement : MonoBehaviour
         camForward.y = 0;
         camForward.Normalize();
 
-        Vector3 camRight = camera.transform.right;
+        transform.forward = Quaternion.Slerp(Quaternion.Euler(transform.forward), Quaternion.Euler(camForward), 1) * camForward;
 
+        Vector3 camRight = camera.transform.right;
+        
         Vector3 delta = (moveInput.x * camRight + moveInput.y * camForward) * moveSpeed;
 
         if(isGrounded || moveInput.x != 0 || moveInput.y != 0)
@@ -59,7 +67,24 @@ public class CharacterMovement : MonoBehaviour
 
         velocity += Physics.gravity * Time.fixedDeltaTime;
 
+        if (!isGrounded)
+            hitDirection = Vector3.zero;
+
+        if(moveInput.x == 0 && moveInput.y == 0)
+        {
+            Vector3 horizontalHitDirection = hitDirection;
+            horizontalHitDirection.y = 0;
+            float displacement = horizontalHitDirection.magnitude;
+            if (displacement > 0 && !Physics.Raycast(transform.position, -transform.up, 0.1f))
+                velocity -= 0.2f * horizontalHitDirection / displacement;
+        }
+
         characterController.Move(velocity * Time.fixedDeltaTime);
         isGrounded = characterController.isGrounded;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit _hit)
+    {
+        hitDirection = _hit.point - transform.position;
     }
 }
