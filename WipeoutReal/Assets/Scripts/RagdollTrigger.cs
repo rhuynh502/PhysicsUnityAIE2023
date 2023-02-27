@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class RagdollTrigger : MonoBehaviour
 {
+    public float hitForce = 1000;
     private void OnTriggerEnter(Collider _other)
     {
-        Ragdoll ragDoll = _other.GetComponentInParent<Ragdoll>();
-        if(ragDoll != null)
+        Ragdoll player = _other.gameObject.GetComponentInParent<Ragdoll>();
+        if (player != null)
         {
-            ragDoll.ragdollOn = true;
+            Rigidbody rb = player.gameObject.GetComponentInParent<Rigidbody>();
+
+            if (rb != null)
+                rb.AddForce(Vector3.Normalize(rb.transform.position - transform.position)  * hitForce);
+            player.ragdollOn = true;
         }
     }
 }

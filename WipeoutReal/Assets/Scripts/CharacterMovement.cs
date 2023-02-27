@@ -7,9 +7,12 @@ public class CharacterMovement : MonoBehaviour
 {
     public float moveSpeed = 10;
     public float jumpHeight = 10;
+    public Vector3 respawnPos;
     
     private CharacterController characterController;
     private Animator animator;
+    private Ragdoll ragdoll;
+    private Rigidbody rb;
     public Camera camera;
     private Vector2 moveInput = new Vector2();
     private bool jumpInput = false;
@@ -23,7 +26,10 @@ public class CharacterMovement : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
+        ragdoll = GetComponentInChildren<Ragdoll>();
+        rb = GetComponentInChildren<Rigidbody>();
         camera = Camera.main;
+
     }
 
     // Update is called once per frame
@@ -35,6 +41,15 @@ public class CharacterMovement : MonoBehaviour
         animator.SetFloat("Forwards", moveInput.y);
         animator.SetFloat("Side", moveInput.x);
         animator.SetBool("Jump", !isGrounded);
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            velocity = Vector3.zero;
+            rb.velocity = Vector3.zero;
+            transform.position = new Vector3(-22, 0.5f, 0);
+            rb.transform.position = respawnPos;
+            ragdoll.ragdollOn = false;
+        }
     }
 
     void FixedUpdate()
@@ -43,10 +58,15 @@ public class CharacterMovement : MonoBehaviour
         camForward.y = 0;
         camForward.Normalize();
 
+        if(ragdoll.ragdollOn)
+        {
+            return;
+        }
+
         transform.forward = Quaternion.Slerp(Quaternion.Euler(transform.forward), Quaternion.Euler(camForward), 1) * camForward;
 
         Vector3 camRight = camera.transform.right;
-        
+
         Vector3 delta = (moveInput.x * camRight + moveInput.y * camForward) * moveSpeed;
 
         if(isGrounded || moveInput.x != 0 || moveInput.y != 0)
