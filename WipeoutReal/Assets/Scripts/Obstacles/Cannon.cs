@@ -6,7 +6,7 @@ public class Cannon : MonoBehaviour
 {
     public List<GameObject> objectPool;
     public GameObject ballPrefab;
-    public float timer;
+    public float timer = 0;
     public float hitForce = 100;
     public float shootTimer = 1.5f;
     // Start is called before the first frame update
@@ -21,13 +21,13 @@ public class Cannon : MonoBehaviour
         if(timer >= shootTimer)
         {
             GameObject ball = ShootCannon();
+            objectPool.Add(ball);
             ball.SetActive(true);
             ball.transform.position = transform.position + transform.forward;
             ball.GetComponent<Rigidbody>().AddForce(transform.forward * hitForce);
 
             timer = 0;
         }
-
 
         timer += Time.deltaTime;
     }
@@ -47,4 +47,5 @@ public class Cannon : MonoBehaviour
 
         return Instantiate(ballPrefab);
     }
+
 }
