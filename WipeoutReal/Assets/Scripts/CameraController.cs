@@ -29,16 +29,16 @@ public class CameraController : MonoBehaviour
 
         angles.x = Mathf.Clamp(angles.x - dx * cameraSpeed * Time.deltaTime, 0, 70);
 
-        angles.y += dy * cameraSpeed * Time.deltaTime;
+        //angles.y += dy * cameraSpeed * Time.deltaTime;
         transform.eulerAngles = angles;
 
         distFromCamera = Mathf.Clamp(distFromCamera - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minZoom, maxZoom);
 
-        RaycastHit hit;
-        if (Physics.Raycast(GetTargetPosition() + -transform.forward, -transform.forward, out hit, distFromCamera))
+        //RaycastHit hit;
+        /*if (Physics.Raycast(GetTargetPosition() + -transform.forward, -transform.forward, out hit, distFromCamera))
             currentDistance = hit.distance;
-        else
-            currentDistance = Mathf.MoveTowards(currentDistance, distFromCamera, Time.deltaTime * relaxSpeed);
+        else*/
+        currentDistance = Mathf.MoveTowards(currentDistance, distFromCamera, Time.deltaTime * relaxSpeed);
 
         transform.position = GetTargetPosition() - currentDistance * transform.forward;
     }

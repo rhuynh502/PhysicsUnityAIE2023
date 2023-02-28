@@ -12,12 +12,13 @@ public class CharacterMovement : MonoBehaviour
     private CharacterController characterController;
     private Animator animator;
     private Ragdoll ragdoll;
-    private Rigidbody rb;
-    public Camera camera;
+    new public Camera camera;
     private Vector2 moveInput = new Vector2();
     private bool jumpInput = false;
 
     public bool isGrounded = true;
+    public bool isRespawning = false;
+    public bool isTackling = false;
     public Vector3 velocity = new Vector3();
     public Vector3 hitDirection;
 
@@ -27,7 +28,6 @@ public class CharacterMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
         ragdoll = GetComponentInChildren<Ragdoll>();
-        rb = GetComponentInChildren<Rigidbody>();
         camera = Camera.main;
 
     }
@@ -35,21 +35,37 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0) && isGrounded)
+        {
+            animator.SetBool("Tackle", true);
+            StartCoroutine(Tackling());
+        }
+                
         moveInput.x = Input.GetAxis("Horizontal");
         moveInput.y = Input.GetAxis("Vertical");
         jumpInput = Input.GetButton("Jump");
+        
         animator.SetFloat("Forwards", moveInput.y);
         animator.SetFloat("Side", moveInput.x);
         animator.SetBool("Jump", !isGrounded);
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if(transform.position.y < -10 && !ragdoll.ragdollOn)
+            ragdoll.ragdollOn = true;
+      
+        if(ragdoll.ragdollOn && !isRespawning)
+            StartCoroutine(Respawning());
+        
+        if(Input.GetKeyDown(KeyCode.E))
         {
-            velocity = Vector3.zero;
-            rb.velocity = Vector3.zero;
-            transform.position = new Vector3(-22, 0.5f, 0);
-            rb.transform.position = respawnPos;
-            ragdoll.ragdollOn = false;
+            if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, 10) && 
+                hitInfo.rigidbody.gameObject.CompareTag("Elevator"))
+            {
+                CallElevator button = hitInfo.rigidbody.gameObject.GetComponent<CallElevator>();
+                if (button != null)
+                    button.UseElevator();
+            }
         }
+
     }
 
     void FixedUpdate()
@@ -75,7 +91,7 @@ public class CharacterMovement : MonoBehaviour
             velocity.z = delta.z;
         }
 
-        if (jumpInput && isGrounded)
+        if (jumpInput && isGrounded && !animator.GetBool("Tackle"))
         {
             float jumpVelocity = Mathf.Sqrt(-2 * Physics.gravity.y * jumpHeight);
 
@@ -99,12 +115,37 @@ public class CharacterMovement : MonoBehaviour
                 velocity -= 0.2f * horizontalHitDirection / displacement;
         }
 
-        characterController.Move(velocity * Time.fixedDeltaTime);
+        if(!animator.GetBool("Tackle"))
+            characterController.Move(velocity * Time.fixedDeltaTime);
         isGrounded = characterController.isGrounded;
     }
 
     private void OnControllerColliderHit(ControllerColliderHit _hit)
     {
         hitDirection = _hit.point - transform.position;
+    }
+
+    IEnumerator Respawning()
+    {
+        isRespawning = true;
+        animator.SetBool("Tackle", false);
+        yield return new WaitForSecondsRealtime(3);
+
+        velocity = Vector3.zero;
+        characterController.enabled = false;
+        characterController.transform.position = respawnPos;
+
+        ragdoll.ragdollOn = false;
+        animator.enabled = true;
+
+        characterController.enabled = true;
+        isRespawning = false;
+    }
+
+    IEnumerator Tackling()
+    {
+        yield return new WaitForSecondsRealtime(1.5f);
+
+        animator.SetBool("Tackle", false);
     }
 }

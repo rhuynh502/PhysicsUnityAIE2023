@@ -12,9 +12,10 @@ public class RagdollTrigger : MonoBehaviour
         {
             Rigidbody rb = player.gameObject.GetComponentInParent<Rigidbody>();
 
+            player.ragdollOn = true;
+
             if (rb != null)
                 rb.AddForce(Vector3.Normalize(rb.transform.position - transform.position)  * hitForce);
-            player.ragdollOn = true;
         }
     }
 }

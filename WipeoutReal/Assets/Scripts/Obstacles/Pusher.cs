@@ -30,7 +30,7 @@ public class Pusher : MonoBehaviour
     {
         float time = 0;
         Vector3 startPos = transform.position;
-        Vector3 endPos = transform.position + 2.5f * (goingForward ? transform.forward : -transform.forward);
+        Vector3 endPos = transform.position + 3.5f * (goingForward ? transform.forward : -transform.forward);
 
         while (time < duration)
         {
