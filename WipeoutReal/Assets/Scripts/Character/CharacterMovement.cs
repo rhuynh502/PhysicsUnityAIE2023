@@ -13,10 +13,12 @@ public class CharacterMovement : MonoBehaviour
     private Animator animator;
     private Ragdoll ragdoll;
     new public Camera camera;
+    private Score score;
     private Vector2 moveInput = new Vector2();
     private bool jumpInput = false;
 
     public bool isGrounded = true;
+    private bool win = false;
     public bool isRespawning = false;
     public bool isTackling = false;
     public Vector3 velocity = new Vector3();
@@ -29,12 +31,14 @@ public class CharacterMovement : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         ragdoll = GetComponentInChildren<Ragdoll>();
         camera = Camera.main;
-
+        score = GetComponent<Score>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (win) return;
+
         if (Input.GetMouseButtonDown(0) && isGrounded)
         {
             animator.SetBool("Tackle", true);
@@ -57,7 +61,8 @@ public class CharacterMovement : MonoBehaviour
         
         if(Input.GetKeyDown(KeyCode.E))
         {
-            if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, 10) && 
+
+            if(Physics.Raycast(camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)), out RaycastHit hitInfo, 25, LayerMask.GetMask("Interactable")) && 
                 hitInfo.rigidbody.gameObject.CompareTag("Elevator"))
             {
                 CallElevator button = hitInfo.rigidbody.gameObject.GetComponent<CallElevator>();
@@ -70,6 +75,8 @@ public class CharacterMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (win) return;
+
         Vector3 camForward = camera.transform.forward;
         camForward.y = 0;
         camForward.Normalize();
@@ -115,7 +122,7 @@ public class CharacterMovement : MonoBehaviour
                 velocity -= 0.2f * horizontalHitDirection / displacement;
         }
 
-        if(!animator.GetBool("Tackle"))
+        if (!animator.GetBool("Tackle"))
             characterController.Move(velocity * Time.fixedDeltaTime);
         isGrounded = characterController.isGrounded;
     }
@@ -129,6 +136,7 @@ public class CharacterMovement : MonoBehaviour
     {
         isRespawning = true;
         animator.SetBool("Tackle", false);
+        score.AddDeathCount();
         yield return new WaitForSecondsRealtime(3);
 
         velocity = Vector3.zero;
@@ -147,5 +155,10 @@ public class CharacterMovement : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.5f);
 
         animator.SetBool("Tackle", false);
+    }
+
+    public void WinGame()
+    {
+        win = true;
     }
 }

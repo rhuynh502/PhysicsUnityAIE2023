@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7093503506860452442}
   - component: {fileID: 7093503506860452443}
   - component: {fileID: 407582056697489778}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Button
   m_TagString: Elevator
   m_Icon: {fileID: 0}

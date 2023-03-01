@@ -38,6 +38,7 @@ public class Pusher : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
+        startPos = endPos;
         finishRoutine = true;
         goingForward = !goingForward;
     }
