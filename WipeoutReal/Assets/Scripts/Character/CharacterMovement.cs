@@ -8,6 +8,7 @@ public class CharacterMovement : MonoBehaviour
     public float moveSpeed = 10;
     public float jumpHeight = 10;
     public Vector3 respawnPos;
+    public float hitForce = 5000;
     
     private CharacterController characterController;
     private Animator animator;
@@ -18,7 +19,7 @@ public class CharacterMovement : MonoBehaviour
     private bool jumpInput = false;
 
     public bool isGrounded = true;
-    private bool win = false;
+    public bool win { get; private set; }
     public bool isRespawning = false;
     public bool isTackling = false;
     public Vector3 velocity = new Vector3();
@@ -32,18 +33,13 @@ public class CharacterMovement : MonoBehaviour
         ragdoll = GetComponentInChildren<Ragdoll>();
         camera = Camera.main;
         score = GetComponent<Score>();
+        win = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (win) return;
-
-        if (Input.GetMouseButtonDown(0) && isGrounded)
-        {
-            animator.SetBool("Tackle", true);
-            StartCoroutine(Tackling());
-        }
                 
         moveInput.x = Input.GetAxis("Horizontal");
         moveInput.y = Input.GetAxis("Vertical");
@@ -61,13 +57,26 @@ public class CharacterMovement : MonoBehaviour
         
         if(Input.GetKeyDown(KeyCode.E))
         {
-
             if(Physics.Raycast(camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)), out RaycastHit hitInfo, 25, LayerMask.GetMask("Interactable")) && 
                 hitInfo.rigidbody.gameObject.CompareTag("Elevator"))
             {
                 CallElevator button = hitInfo.rigidbody.gameObject.GetComponent<CallElevator>();
                 if (button != null)
                     button.UseElevator();
+            }
+        }
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            if (Physics.Raycast(camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)), out RaycastHit hitInfo, 25, LayerMask.GetMask("Interactable")) &&
+                hitInfo.rigidbody.gameObject.CompareTag("Door"))
+            {
+                if(!hitInfo.rigidbody.isKinematic && isGrounded)
+                {
+                    hitInfo.rigidbody.AddForce(transform.forward * hitForce);
+                    animator.SetBool("Tackle", true);
+                    StartCoroutine(Tackling());
+                }
             }
         }
 
@@ -159,6 +168,7 @@ public class CharacterMovement : MonoBehaviour
 
     public void WinGame()
     {
+        score.win = true;
         win = true;
     }
 }

@@ -12,18 +12,21 @@ public class Score : MonoBehaviour
     private float time = 0;
     private int minutes = 0;
     private int seconds = 0;
+    public bool win = false;
 
     private void Awake()
     {
         textDeath.text = "Deaths: " + deaths;
+        time = 0;
     }
 
     void Update()
     {
-        time += Time.deltaTime;
+        if(!win)
+            time += Time.deltaTime;
         minutes = (int)(time / 60);
         seconds = (int)(time % 60);
-        textTime.text = minutes+ ":" + seconds;
+        textTime.text = minutes+ ":" + seconds.ToString("D2");
     }
 
     public void AddDeathCount()

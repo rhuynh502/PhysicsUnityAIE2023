@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7947894098574315724}
   - component: {fileID: 7947894098574315727}
   - component: {fileID: 7947894098574315726}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Door3
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -224,9 +224,9 @@ GameObject:
   - component: {fileID: 7947894098674094766}
   - component: {fileID: 7947894098674094761}
   - component: {fileID: 7947894098674094764}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Door2
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -317,7 +317,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7947894098674094763}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
@@ -588,9 +588,9 @@ GameObject:
   - component: {fileID: 7947894099892756252}
   - component: {fileID: 7947894099892756255}
   - component: {fileID: 7947894099892756258}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Door1
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -681,7 +681,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7947894099892756249}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0

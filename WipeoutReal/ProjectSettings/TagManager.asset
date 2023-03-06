@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CannonBall
   - Elevator
+  - Door
   layers:
   - Default
   - TransparentFX

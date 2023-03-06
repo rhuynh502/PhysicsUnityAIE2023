@@ -12,13 +12,13 @@ public class Door : MonoBehaviour
 
     private void OnCollisionEnter(Collision _collision)
     {
-        if(_collision.gameObject.CompareTag("Player"))
+        if(_collision.gameObject.CompareTag("Player") && rb.velocity.magnitude > 10)
         {
             float force = Vector3.Magnitude(rb.velocity);
             Vector3 dir = Vector3.Normalize(rb.velocity);
 
             Rigidbody player = _collision.gameObject.GetComponentInChildren<Rigidbody>();
-            player.AddForce(Vector3.Dot(dir, player.velocity) > 0 ? -dir : dir * force * rb.mass);
+            player.AddForce(dir * force * rb.mass);
         }
     }
 }
