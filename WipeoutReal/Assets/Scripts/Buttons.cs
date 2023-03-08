@@ -12,7 +12,17 @@ public class Buttons : MonoBehaviour
 
     public void RetryGame()
     {
-        SceneManager.UnloadSceneAsync(1);
-        SceneManager.LoadSceneAsync(0);
+        SceneManager.UnloadSceneAsync("Victory");
+        SceneManager.LoadSceneAsync("Wipeout");
+    }
+
+    public void PlayGame()
+    {
+        SceneManager.LoadSceneAsync("Wipeout");
+    }
+
+    public void MenuScreen()
+    {
+        SceneManager.LoadSceneAsync("MainMenu");
     }
 }

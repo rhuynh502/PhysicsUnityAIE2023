@@ -9,6 +9,8 @@ public class CharacterMovement : MonoBehaviour
     public float jumpHeight = 10;
     public Vector3 respawnPos;
     public float hitForce = 5000;
+
+    [SerializeField] private GameObject pauseScreen;
     
     private CharacterController characterController;
     private Animator animator;
@@ -17,11 +19,12 @@ public class CharacterMovement : MonoBehaviour
     private Score score;
     private Vector2 moveInput = new Vector2();
     private bool jumpInput = false;
+    public static bool isPaused = false;
 
     public bool isGrounded = true;
     public bool win { get; private set; }
     public bool isRespawning = false;
-    public bool isTackling = false;
+    public static bool isTackling = false;
     public Vector3 velocity = new Vector3();
     public Vector3 hitDirection;
 
@@ -40,7 +43,16 @@ public class CharacterMovement : MonoBehaviour
     void Update()
     {
         if (win) return;
-                
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+            pauseScreen.SetActive(!pauseScreen.activeInHierarchy);
+            isPaused = !isPaused;
+        }
+
+        if (isPaused) return;
+
         moveInput.x = Input.GetAxis("Horizontal");
         moveInput.y = Input.GetAxis("Vertical");
         jumpInput = Input.GetButton("Jump");
@@ -85,6 +97,8 @@ public class CharacterMovement : MonoBehaviour
     void FixedUpdate()
     {
         if (win) return;
+
+        if(isPaused) return;
 
         Vector3 camForward = camera.transform.forward;
         camForward.y = 0;
@@ -161,8 +175,10 @@ public class CharacterMovement : MonoBehaviour
 
     IEnumerator Tackling()
     {
+        isTackling = true;
         yield return new WaitForSecondsRealtime(1.5f);
 
+        isTackling = false;
         animator.SetBool("Tackle", false);
     }
 

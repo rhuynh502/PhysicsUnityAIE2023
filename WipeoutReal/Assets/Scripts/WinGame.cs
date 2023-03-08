@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,15 +10,6 @@ public class WinGame : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
     }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
-        }
-    }
-
     // Start is called before the first frame update
     private void OnTriggerEnter(Collider _other)
     {

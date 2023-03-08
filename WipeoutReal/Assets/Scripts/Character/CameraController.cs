@@ -23,6 +23,8 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (CharacterMovement.isPaused || CharacterMovement.isTackling) return;
+
         Vector3 angles = transform.eulerAngles;
         float dx = Input.GetAxis("Mouse Y");
         float dy = Input.GetAxis("Mouse X");

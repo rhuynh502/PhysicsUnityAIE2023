@@ -22,6 +22,8 @@ public class Score : MonoBehaviour
 
     void Update()
     {
+        if (CharacterMovement.isPaused) return;
+
         if(!win)
             time += Time.deltaTime;
         minutes = (int)(time / 60);
